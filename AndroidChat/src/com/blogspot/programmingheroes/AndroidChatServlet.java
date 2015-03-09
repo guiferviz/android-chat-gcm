@@ -18,7 +18,7 @@ import com.google.android.gcm.server.Result;
 
 
 @SuppressWarnings("serial")
-public class GuestBookServlet extends HttpServlet
+public class AndroidChatServlet extends HttpServlet
 {	
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
