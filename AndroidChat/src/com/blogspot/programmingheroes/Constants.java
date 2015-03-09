@@ -31,4 +31,7 @@ public class Constants
 	public static final String EMAIL_SCOPE =
 			"https://www.googleapis.com/auth/userinfo.email";
 	
+	public static final String GOOGLE_SERVER_KEY =
+			"AIzaSyDoYRkE55uBkXNCC4VU5TojXg345E5bpwY";
+	
 }
