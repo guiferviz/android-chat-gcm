@@ -23,4 +23,4 @@ Clonar el repositorio e importar los dos proyectos a Eclipse. Debes de tener ins
 
 Cualquier duda enviar un correo a [ProgrammingHeroes](mailto:programmingh@gmail.com).
 
-![](URL DE LA IMAGEN AQUÍ)
+![](https://bytebucket.org/programmingheroes/android-chat/raw/532fc3797050f6a0c82d5e79d0bce822bea001d9/AndroidChatAndroid/ic_launcher-web.png?token=83f92eff2c014d760b20e535698f2643495267bb)
