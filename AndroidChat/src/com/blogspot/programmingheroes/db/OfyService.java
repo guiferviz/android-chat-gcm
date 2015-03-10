@@ -3,8 +3,7 @@
 package com.blogspot.programmingheroes.db;
 
 
-import com.blogspot.programmingheroes.endpoint.GuestMessage;
-
+import com.blogspot.programmingheroes.gcm.Contact;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
@@ -30,7 +29,7 @@ public class OfyService
     	 * quieras guardar objetos en el datastore
     	 * usando la librería Objectify.
     	 */
-        factory().register(GuestMessage.class);
+        factory().register(Contact.class);
     }
 
     public static Objectify ofy() {
