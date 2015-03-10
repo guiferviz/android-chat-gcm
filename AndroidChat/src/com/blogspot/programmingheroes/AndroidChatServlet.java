@@ -32,11 +32,11 @@ public class AndroidChatServlet extends HttpServlet
 
 		Result result = null;
 
-		String share = req.getParameter("shareRegId");
+		//String share = req.getParameter("shareRegId");
 
 		// GCM RedgId of Android device to send push notification
 		String regId = "";
-		if (share != null && !share.isEmpty()) {
+		/*if (share != null && !share.isEmpty()) {
 			regId = req.getParameter("regId");
 			PrintWriter writer = new PrintWriter("GCMRegId.txt");
 			writer.println(regId);
@@ -45,32 +45,33 @@ public class AndroidChatServlet extends HttpServlet
 			//req.getRequestDispatcher("index.jsp")
 			//		.forward(req, resp);
 		}
-		else
+		else*/
 		{
 			try
 			{
-				BufferedReader br = new BufferedReader(new FileReader(
-						"GCMRegId.txt"));
-				regId = br.readLine();
-				br.close();
-				String userMessage = req.getParameter("message");
-				Sender sender = new Sender(Constants.GOOGLE_SERVER_KEY);
-				Message message = new Message.Builder().timeToLive(30)
-						.delayWhileIdle(true).addData("123456789", userMessage).build();
+				//BufferedReader br = new BufferedReader(new FileReader(
+				//		"GCMRegId.txt"));
+				//regId = br.readLine();
+				//br.close();
+				regId = "APA91bEziSGrotNJY4AgzMQsgL2uS2RrYadsRc7wIme4hXu29gQ8LK_4-xfiKQZLxSRkCt3LQsFHWTzQKWAYr4bxDKU_VLLncmCmMRVcCttr4O_QUVyNH4dhc4r69rGfauHK_eSdU3ZetvX1YrT4Xq84acHoJtMxpFFVesYcH8_xV_pWm9om7-oXK24KTGYojHdeIhbhJAci";
+				String userMessage = "pene";//req.getParameter("message");
 				System.out.println("regId: " + regId);
-				result = sender.send(message, regId, 1);
-				req.setAttribute("pushStatus", result.toString());
+				Sender sender = new Sender(Constants.GOOGLE_SERVER_KEY);
+				Message message = new Message.Builder()
+						.addData("message", userMessage).build();
+				result = sender.sendNoRetry(message, regId);
+				//req.setAttribute("pushStatus", result.toString());
 			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
-				req.setAttribute("pushStatus",
-						"RegId required: " + e.toString());
+				//req.setAttribute("pushStatus",
+				//		"RegId required: " + e.toString());
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
-				req.setAttribute("pushStatus", e.toString());
+				//req.setAttribute("pushStatus", e.toString());
 			}
 			
 			//req.getRequestDispatcher("index.jsp")
