@@ -71,7 +71,7 @@ public class ContactDAO
 	{
 		Contact contact = null;
 		List<Contact> contacts = OfyService.ofy().load().type(Contact.class)
-				.filter("regid =", regId).list();
+				.filter("regId =", regId).list();
 		int size = contacts.size();
 		
 		if (size > 1)
@@ -107,10 +107,9 @@ public class ContactDAO
 	 */
 	public static boolean checkUniqueName(String name)
 	{
-		int nContactsWithName = OfyService.ofy().load().type(Contact.class)
-				.filter("name =", name).count();
+		Contact contact = ContactDAO.read(name);
 		
-		return (nContactsWithName == 0);
+		return contact == null;
 	}
 	
 }
