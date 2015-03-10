@@ -4,5 +4,8 @@
     <string name="app_name">Guest Book</string>
     <string name="send">Enviar</string>
     <string name="delete">Borrar</string>
+    <string name="title_activity_registry">RegistryActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
