@@ -5,28 +5,48 @@ package com.blogspot.programmingheroes.endpoint;
 
 import java.util.List;
 
-import com.blogspot.programmingheroes.Constants;
-import com.blogspot.programmingheroes.db.OfyService;
+import com.blogspot.programmingheroes.db.ContactDAO;
 import com.blogspot.programmingheroes.db.Contact;
+
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.Named;
-import com.googlecode.objectify.cmd.Query;
+import com.google.api.server.spi.response.ConflictException;
 
 
 /**
  * API de un sistema de chat. Los usuarios deberán de darse de alta en primer
- * lugar con un nombre único y su 
- * @author gazpacho4you
+ * lugar con un nombre único y su id para poder ser contactados mediante GCM.
+ * 
+ * @author ProgrammingHeroes
  *
  */
-@Api(title = "chatEndpoint",
-	 name = "chatendpoint",
-	 description = "Endpoint para un sistema de chat.",
-	 version = "v1",
-	 //scopes = {Constants.EMAIL_SCOPE},
-	 clientIds = {Constants.WEB_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID})
+@Api(title = ConstantsAPI.TITLE,
+	 name = ConstantsAPI.NAME,
+	 description = ConstantsAPI.DESCRIPTION,
+	 version = ConstantsAPI.VERSION,
+	 namespace = @ApiNamespace(
+			 ownerDomain = ConstantsAPI.NAMESPACE_OWNER_DOMAIN,
+			 ownerName = ConstantsAPI.NAMESPACE_OWNER_NAME,
+			 packagePath = ConstantsAPI.NAMESPACE_PACKAGE_PATH
+	 ),
+	 clientIds =
+ 	 {
+		 ConstantsAPI.WEB_CLIENT_ID,
+		 ConstantsAPI.ANDROID_CLIENT_ID,
+		 ConstantsAPI.IOS_CLIENT_ID,
+		 ConstantsAPI.API_EXPLORER_CLIENT_ID
+	 },
+	 audiences =
+ 	 {
+		 ConstantsAPI.ANDROID_AUDIENCE
+	 },
+	 scopes =
+ 	 {
+		 ConstantsAPI.EMAIL_SCOPE
+	 })
 
 public class ChatEndpoint
 {
@@ -44,37 +64,66 @@ public class ChatEndpoint
 		
 	public List<Contact> getAllContacts()
 	{
-		Query<Contact> query =
-				OfyService.ofy().load().type(Contact.class).order("date");
-		return query.list();
+		return ContactDAO.readAll();
 	}
 	
 	
+	/**
+	 * Añade un nuevo contacto a nuestra base de datos.
+	 * Comprueba si el nombre es único, si no lo es se lanza ConflictException.
+	 * En el caso de que regId no sea único, se cambiará el nombre del usuario
+	 * que ya existe con ese regId por el nuevo nombre indicado.
+	 * 
+	 * @param name Nombre único del contacto.
+	 * @param regId Id de GCM.
+	 * 
+	 * @return El objeto Contact creado.
+	 * @throws ConflictException Si ya existe un usurio con el mismo nombre.
+	 */
 	@ApiMethod(name = "createContact",
 	 		   path = "createcontact",
 	 		   httpMethod = HttpMethod.POST)
 		
 	public Contact create(@Named("name") String name,
-						  @Named("regid") String regId)
+						  @Named("regid") String regId) throws ConflictException
 	{
 		Contact contact = new Contact(name, regId);
 		
-		OfyService.ofy().save().entity(contact).now();
+		if (ContactDAO.checkUniqueName(name))
+		{
+			Contact contact2 = ContactDAO.readByRegID(regId);
+			
+			if (contact2 != null)
+			{
+				// Único nombre, regId duplicado (cambio de nombre)
+				ContactDAO.delete(contact2);
+			}
+			
+			ContactDAO.save(contact);
+		}
+		else
+		{
+			throw new ConflictException("Not unique name for the user.");
+		}
 		
 		return contact;
 	}
 	
 	
-	@ApiMethod(name = "delete",
-	 		   path = "delete",
-	 		   httpMethod = HttpMethod.GET)
+	/**
+	 * Borra un usuario a partir de su nombre y su regId.
+	 * 
+	 * @param name Nombre del usuario a borrar.
+	 */
+	@ApiMethod(name = "deleteContact",
+	 		   path = "deleteContact",
+	 		   httpMethod = HttpMethod.POST)
 		
-	public void delete(@Named("id") Long id)
+	public void delete(@Named("name") String name,
+					   @Named("regid") String regId)
 	{
-		//Result<Void> result = 
-		OfyService.ofy().delete().type(Contact.class).id(id);
-		
-		return;
+		Contact contact = new Contact(name, regId);
+		ContactDAO.delete(contact);
 	}
 	
 }
