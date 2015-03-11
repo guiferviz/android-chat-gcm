@@ -1,32 +1,21 @@
 
 
-package com.blogspot.programmingheroes.guestbook;
+package com.blogspot.programmingheroes.chat;
 
-
-import java.io.IOException;
-import java.util.List;
-
-import com.appspot.pruebas_gae.gbe.Gbe;
-import com.appspot.pruebas_gae.gbe.Gbe.Delete;
-import com.appspot.pruebas_gae.gbe.model.GuestMessage;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 
 
 public class MessageAdapter extends BaseAdapter implements OnClickListener
 {
 	
-	private List<GuestMessage> data;
+	/*private List<GuestMessage> data;
 	
 	private LayoutInflater inflater;
 	
@@ -42,19 +31,19 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
 		//		context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.data = data;
 		this.gbe = gbe;
-	}
+	}*/
 	
 
 	@Override
 	public int getCount()
 	{
-		return this.data.size();
+		return 0;//this.data.size();
 	}
 
 	@Override
 	public Object getItem(int position)
 	{
-		return this.data.get(position);
+		return null;//this.data.get(position);
 	}
 
 	@Override
@@ -67,7 +56,7 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
 	@SuppressLint("InflateParams")
 	public View getView(int n, View view, ViewGroup parent)
 	{
-		GuestMessage message = data.get(n);
+		/*GuestMessage message = data.get(n);
 		
 		if (view == null)
 		{
@@ -83,20 +72,21 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
 		button.setTag(n);
 		button.setOnClickListener(this);
 		
-		return view;
+		return view;*/
+		return null;
 	}
 
 
 	@Override
 	public void onClick(View v)
 	{
-		int n = (int) v.getTag();
+		/*int n = (int) v.getTag();
 		GuestMessage guestMessage = (GuestMessage) data.get(n);
 		DeleteMessage deleteMessage = new DeleteMessage(guestMessage.getId());
 		deleteMessage.execute();
 		data.remove(n);
 		
-		notifyDataSetChanged();
+		notifyDataSetChanged();*/
 	}
 	
 	private class DeleteMessage extends AsyncTask<Void, Void, Void>
@@ -114,7 +104,7 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
         {
         	Void void1 = null;
         	
-            try
+            /*try
             {
                 Delete delete = gbe.delete(id);
                 void1 = delete.execute();
@@ -122,7 +112,7 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
             catch (IOException e)
             {
                 e.printStackTrace();
-            }
+            }*/
             
             return void1;
         }
@@ -140,10 +130,10 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
         }
     }
 
-	public void add(GuestMessage result)
+	/*public void add(GuestMessage result)
 	{
 		data.add(result);
 		notifyDataSetChanged();
-	}
+	}*/
 
 }

@@ -1,28 +1,18 @@
 
 
-package com.blogspot.programmingheroes.guestbook;
+package com.blogspot.programmingheroes.chat;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import com.appspot.pruebas_gae.gbe.Gbe;
-import com.appspot.pruebas_gae.gbe.Gbe.Create;
-import com.appspot.pruebas_gae.gbe.Gbe.Get;
-import com.appspot.pruebas_gae.gbe.model.GuestMessage;
-import com.appspot.pruebas_gae.gbe.model.GuestMessageCollection;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.json.gson.GsonFactory;
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
+
+import com.blogspot.programmingheroes.chat.R;
 
 
 /**
@@ -59,7 +49,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	private Context context;
 	
-	private Gbe guestBookEndpoint;
+	//private Gbe guestBookEndpoint;
 	
 	private ListView listView;
 	
@@ -83,7 +73,7 @@ public class MainActivity extends Activity implements OnClickListener
 		
 		listView.setAdapter(arrayAdapter);*/
 		
-		Gbe.Builder builder = new Gbe.Builder(
+		/*Gbe.Builder builder = new Gbe.Builder(
 				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
 		// No sé que es de application name...
 		//builder.setApplicationName("gbe");
@@ -93,10 +83,10 @@ public class MainActivity extends Activity implements OnClickListener
 		button.setOnClickListener(this);
 		
 		GetMessage getMessage = new GetMessage();
-		getMessage.execute();
+		getMessage.execute();*/
 	}
 	
-	private class CreateMessage extends AsyncTask<Void, Void, GuestMessage>
+	/*private class CreateMessage extends AsyncTask<Void, Void, GuestMessage>
     {
 
         private String message;
@@ -208,16 +198,16 @@ public class MainActivity extends Activity implements OnClickListener
             listView.setAdapter(messageAdapter);
             listView.setSelection(list.size() - 1);
         }
-    }
+    }*/
 	
 	@Override
 	public void onClick(View v)
 	{
 		EditText textView = (EditText) findViewById(R.id.edit_text);		
 		Log.v("ja", textView.getText().toString());
-		CreateMessage createMessage = new CreateMessage(
+		/*CreateMessage createMessage = new CreateMessage(
 				textView.getText().toString());
-		createMessage.execute();		
+		createMessage.execute();		*/
 	}
 
 }

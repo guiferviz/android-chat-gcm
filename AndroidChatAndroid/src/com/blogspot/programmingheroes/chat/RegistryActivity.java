@@ -1,14 +1,10 @@
 
 
-package com.blogspot.programmingheroes.guestbook;
+package com.blogspot.programmingheroes.chat;
 
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,8 +14,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
 public class RegistryActivity extends Activity

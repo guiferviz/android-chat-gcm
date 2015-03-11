@@ -1,9 +1,7 @@
 
 
-package com.blogspot.programmingheroes.guestbook;
+package com.blogspot.programmingheroes.chat;
 
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -14,6 +12,9 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.blogspot.programmingheroes.chat.R;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
 public class GcmIntentService extends IntentService
