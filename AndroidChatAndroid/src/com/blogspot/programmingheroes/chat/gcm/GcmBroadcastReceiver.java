@@ -1,6 +1,6 @@
 
 
-package com.blogspot.programmingheroes.chat;
+package com.blogspot.programmingheroes.chat.gcm;
 
 
 import android.app.Activity;

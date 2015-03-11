@@ -42,14 +42,14 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name="com.blogspot.programmingheroes.chat.GcmBroadcastReceiver"
+            android:name="com.blogspot.programmingheroes.chat.gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
-        <service android:name="com.blogspot.programmingheroes.chat.GcmIntentService" />
+        <service android:nacom.blogspot.programmingheroes.chat.gcm.GcmIntentServicevice" />
     </application>
 
 </manifest>

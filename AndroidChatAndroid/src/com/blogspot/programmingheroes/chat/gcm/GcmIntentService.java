@@ -1,6 +1,6 @@
 
 
-package com.blogspot.programmingheroes.chat;
+package com.blogspot.programmingheroes.chat.gcm;
 
 
 import android.app.IntentService;
@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.blogspot.programmingheroes.chat.R;
+import com.blogspot.programmingheroes.chat.RegistryActivity;
+import com.blogspot.programmingheroes.chat.R.drawable;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
