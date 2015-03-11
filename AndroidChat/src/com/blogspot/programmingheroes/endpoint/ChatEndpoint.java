@@ -143,9 +143,9 @@ public class ChatEndpoint
 					   		@Named("message") String msg)
 					   				throws UnauthorizedException
 	{
-		Contact receiver = ContactDAO.read(sender.name);
+		Contact sender2 = ContactDAO.read(sender.name);
 		
-		if (sender.equals(receiver))
+		if (sender.equals(sender2))
 		{
 			ContactMessage message = new ContactMessage(sender, msg);
 			ContactMessageSender.sendToAllContacts(message);
