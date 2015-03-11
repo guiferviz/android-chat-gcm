@@ -3,14 +3,11 @@
 package com.blogspot.programmingheroes.endpoint;
 
 
-import java.util.Date;
 import java.util.List;
-
-import android.os.Message;
 
 import com.blogspot.programmingheroes.db.ContactDAO;
 import com.blogspot.programmingheroes.db.Contact;
-import com.google.android.gcm.server.Sender;
+import com.blogspot.programmingheroes.gcm.ContactMessageSender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -142,7 +139,7 @@ public class ChatEndpoint
 	 		   path = "sendmessage",
 	 		   httpMethod = HttpMethod.POST)
 		
-	public void sendMessage(@Named("sender") Contact sender,
+	public void sendMessage(Contact sender,
 					   		@Named("message") String msg)
 					   				throws UnauthorizedException
 	{
