@@ -3,17 +3,21 @@
 package com.blogspot.programmingheroes.endpoint;
 
 
+import java.util.Date;
 import java.util.List;
+
+import android.os.Message;
 
 import com.blogspot.programmingheroes.db.ContactDAO;
 import com.blogspot.programmingheroes.db.Contact;
-
+import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.ConflictException;
+import com.google.api.server.spi.response.UnauthorizedException;
 
 
 /**
@@ -126,4 +130,33 @@ public class ChatEndpoint
 		ContactDAO.delete(contact);
 	}
 	
+	
+	/**
+	 * Envía un mensaje a todos los usuarios de la app.
+	 * 
+	 * @param contact Usuario que envía el mensaje.
+	 * @param msg Mensaje a enviar.
+	 * @throws UnauthorizedException 
+	 */
+	@ApiMethod(name = "sendMessage",
+	 		   path = "sendmessage",
+	 		   httpMethod = HttpMethod.POST)
+		
+	public void sendMessage(@Named("sender") Contact sender,
+					   		@Named("message") String msg)
+					   				throws UnauthorizedException
+	{
+		Contact receiver = ContactDAO.read(sender.name);
+		
+		if (sender.equals(receiver))
+		{
+			ContactMessage message = new ContactMessage(sender, msg);
+			ContactMessageSender.sendToAllContacts(message);
+		}
+		else
+		{
+			throw new UnauthorizedException("Usuario incorrecto.");
+		}
+	}
+
 }
