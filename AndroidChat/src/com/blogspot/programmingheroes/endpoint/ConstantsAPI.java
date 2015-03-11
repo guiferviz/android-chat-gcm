@@ -49,7 +49,7 @@ public class ConstantsAPI
 	 * Namespace. Constante para @ApiNamespace.
 	 */
 	static final String NAMESPACE_PACKAGE_PATH =
-			"programmingheroes/chat";
+			"endpoint";
 	
 	/**
 	 * Sustituye esto por tu Web Client ID.
