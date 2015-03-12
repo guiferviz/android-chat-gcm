@@ -3,11 +3,10 @@
 package com.blogspot.programmingheroes.chat;
 
 
-import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +18,9 @@ import android.widget.ListView;
 import com.blogger.programmingheroes.chat.db.ChatDatabase;
 import com.blogger.programmingheroes.chat.db.ContactMessage;
 import com.blogger.programmingheroes.endpoint.chat.Chat;
-import com.blogger.programmingheroes.endpoint.chat.Chat.GetAllContacts;
 import com.blogger.programmingheroes.endpoint.chat.model.Contact;
-import com.blogger.programmingheroes.endpoint.chat.model.ContactCollection;
+import com.blogger.programmingheroes.endpoint.chat.tasks.GetContactsTask;
+import com.blogger.programmingheroes.endpoint.chat.tasks.SendMessageTask;
 import com.blogspot.programmingheroes.chat.R;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.json.gson.GsonFactory;
@@ -68,6 +67,8 @@ public class MainActivity extends Activity implements OnClickListener
 	
 	private ChatDatabase database;
 	
+	private MainActivityReceiver mainActivityReceiver;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -89,116 +90,40 @@ public class MainActivity extends Activity implements OnClickListener
     	MessageAdapter messageAdapter = new MessageAdapter(this, messages);
     	listView.setAdapter(messageAdapter);
     	
-    	GetContacts getContacts = new GetContacts();
+    	GetContactsTask getContacts = new GetContactsTask(this);
     	getContacts.execute();
+    	
+    	mainActivityReceiver = new MainActivityReceiver(this);
 	}
-	
-	private class SendMessage extends AsyncTask<Void, Void, ContactMessage>
-    {
 
-        private String message;
-        
-        public SendMessage(String message)
-        {
-            this.message = message;
-        }
-        
-        @Override
-        protected ContactMessage doInBackground(Void ... unused)
-        {
-        	Contact contact = MainActivity.this.getUser();
-        	ContactMessage msg = new ContactMessage("Yo", message);
-        	
-            try
-            {
-                Chat.SendMessage sendMessage = chatEndpoint.sendMessage(
-                		message, contact);
-                sendMessage.execute();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            
-            return msg;
-        }
+	@Override
+	public void onResume()
+	{
+		// Registramos un broadcast receiver para evitar la aparición de
+		// notificaciones. Directamente se añadirá el mensaje.
+	    IntentFilter filter = new IntentFilter(
+	    		"com.google.android.c2dm.intent.RECEIVE");
+	    filter.setPriority(1);
+	    registerReceiver(mainActivityReceiver, filter);
 
-        @Override
-        protected void onPostExecute(ContactMessage result)
-        {
-            if (result == null)
-            {
-                Log.v("Resultados de enviar", "No enviado, result == null");
-                return;
-            }
-            
-            Log.v("Propiedades del mensaje", "Message: " + result.msg);
-            
-            MessageAdapter baseAdapter = (MessageAdapter) listView.getAdapter();
-            baseAdapter.add(result);
-            database.add(result);
-        }
-    }
-	
-	private class GetContacts extends AsyncTask<Void, Void, ContactCollection>
-    {
+	    super.onResume();
+	}
 
-        public GetContacts()
-        {
-        }
-        
-        @Override
-        protected ContactCollection doInBackground(Void ... unused)
-        {
-        	ContactCollection contacts = null;
-            
-            try
-            {
-                GetAllContacts create = chatEndpoint.getAllContacts();
-                contacts = create.execute();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            
-            return contacts;
-        }
+	@Override
+	protected void onPause()
+	{
+		unregisterReceiver(mainActivityReceiver);
+		
+		super.onPause();
+	}
 
-		@Override
-        protected void onPostExecute(ContactCollection result)
-        {
-            if (result == null)
-            {
-                Log.e("Resultados de GetContacts", "result == null");
-                return;
-            }
-            
-            List<Contact> list = result.getItems();
-            
-            if (list == null)
-            {
-            	Log.v("Resultados", "No hay contactos");
-            	return;
-            }
-            
-            for (int i = 0; i < list.size(); i++)
-            {
-            	Log.v("Propiedades", "Nombre: " + list.get(i).getName());
-            	Log.v("Propiedades", "RegId: " + list.get(i).getRegId());
-            	Log.v("Propiedades", "-------------");
-            }
-
-            // FIXME ¿Añadir contactos al listview?
-        }
-    }
-	
 	@Override
 	public void onClick(View v)
 	{
-		EditText textView = (EditText) findViewById(R.id.edit_text);		
+		// Send button clicked.
+		EditText textView = (EditText) findViewById(R.id.edit_text);
 		Log.v(LOG_TAG, "Enviando mensaje: " + textView.getText().toString());
-		SendMessage sendMessage = new SendMessage(
+		SendMessageTask sendMessage = new SendMessageTask(this,
 				textView.getText().toString());
 		sendMessage.execute();
 	}
@@ -211,6 +136,41 @@ public class MainActivity extends Activity implements OnClickListener
 		contact.setRegId("APA91bEZDKRCgfumTodfa7CHwVJAtQLqsFm8sROgHHjDthAlCFkDtkEjhH59AnAM2tF-GgO6MjPzwaGQ0g-O4x2-uq8efsEy82DywM4Sabuw5aMI1TtFNlLgi45g8SvlXbpCGqWebfLNbsZO0jr6o9pEg4oEkG47mp8Ycv5co1ZxcX73b5FqhRQ");
 		
 		return contact;
+	}
+
+	/**
+	 * Añade un mensaje tanto al listview como a la base de datos.
+	 * 
+	 * @param message Mensaje a añadir.
+	 */
+	public void addMessage(ContactMessage message)
+	{
+		MessageAdapter baseAdapter = (MessageAdapter) listView.getAdapter();
+        baseAdapter.add(message);
+        database.add(message);
+	}
+
+	/**
+	 * Devuelve el endpoint para poder realizar peticiones al servidor.
+	 * 
+	 * @return El endpoint para el chat.
+	 */
+	public Chat getChatEndpoint()
+	{
+		return chatEndpoint;
+	}
+	
+	/**
+	 * Borra un mensaje tanto del listview como de la base de datos.
+	 * 
+	 * @param message Mensage a borrar.
+	 */
+
+	public void deleteMessage(ContactMessage message)
+	{
+		MessageAdapter baseAdapter = (MessageAdapter) listView.getAdapter();
+        baseAdapter.delete(message);
+        database.delete(message);
 	}
 
 }

@@ -5,11 +5,9 @@ package com.blogspot.programmingheroes.chat;
 
 import java.util.List;
 
-import com.blogger.programmingheroes.chat.db.ChatDatabase;
 import com.blogger.programmingheroes.chat.db.ContactMessage;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,14 +29,14 @@ public class MessageAdapter extends BaseAdapter implements View.OnClickListener
 	
 	private LayoutInflater inflater;
 	
-	private Context context;
+	private MainActivity mainActivity;
 	
 	
-	public MessageAdapter(Context context, List<ContactMessage> data)
+	public MessageAdapter(MainActivity mainActivity, List<ContactMessage> data)
 	{
-		this.inflater = LayoutInflater.from(context);
+		this.inflater = LayoutInflater.from(mainActivity);
 		this.data = data;
-		this.context = context;
+		this.mainActivity = mainActivity;
 	}
 	
 
@@ -95,17 +93,20 @@ public class MessageAdapter extends BaseAdapter implements View.OnClickListener
 		notifyDataSetChanged();
 	}
 	
+	public void delete(ContactMessage contactMessage)
+	{
+		data.remove(contactMessage);
+		notifyDataSetChanged();
+	}
+	
 	
 	@Override
 	public void onClick(View v)
 	{
 		int n = (int) v.getTag();
 		ContactMessage message = (ContactMessage) data.get(n);
-		data.remove(n);
-		ChatDatabase chatDatabase = new ChatDatabase(context);
-		chatDatabase.delete(message);
 		
-		notifyDataSetChanged();
+		mainActivity.deleteMessage(message);
 	}
 
 }
