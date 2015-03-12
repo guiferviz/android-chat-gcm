@@ -13,6 +13,9 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.blogger.programmingheroes.chat.db.ChatDatabase;
+import com.blogger.programmingheroes.chat.db.ContactMessage;
+import com.blogger.programmingheroes.endpoint.chat.model.Contact;
 import com.blogspot.programmingheroes.chat.R;
 import com.blogspot.programmingheroes.chat.RegistryActivity;
 import com.blogspot.programmingheroes.chat.R.drawable;
@@ -24,17 +27,16 @@ public class GcmIntentService extends IntentService
 
     public static final int NOTIFICATION_ID = 1;
     
-	private static final String LOG_TAG = "GCM";
+	private static final String LOG_TAG =
+			GcmBroadcastReceiver.class.getCanonicalName();
 	
 	
     private NotificationManager mNotificationManager;
-    
-    private NotificationCompat.Builder builder;
 
     
     public GcmIntentService()
     {
-        super("GcmIntentService");
+        super(GcmBroadcastReceiver.class.getCanonicalName());
     }
 
     
@@ -58,36 +60,28 @@ public class GcmIntentService extends IntentService
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType))
             {
-                sendNotification("Send error: " + extras.toString());
+                //sendNotification("Send error: " + extras.toString());
             }
             else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType))
             {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
+                //sendNotification("Deleted messages on server: " +
+                //        extras.toString());
             // If it's a regular GCM message, do some work.
             }
             else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType))
             {
-                // This loop represents the service doing some work.
-                for (int i=0; i<5; i++)
-                {
-                    Log.i(LOG_TAG, "Working... " + (i+1)
-                            + "/5 @ " + SystemClock.elapsedRealtime());
-                    try
-                    {
-                        Thread.sleep(5000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                    }
-                }
-                
-                Log.i(LOG_TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
-                Log.i(LOG_TAG, "Received: " + extras.toString());
+            	Log.i(LOG_TAG, "Received: " + extras.toString());
+
+                ContactMessage message = new ContactMessage(
+                		extras.getString("sender"),
+                		extras.getString("message"));
+                sendNotification(message);
+                ChatDatabase database = new ChatDatabase(
+                		this.getApplicationContext());
+                database.add(message);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -98,7 +92,7 @@ public class GcmIntentService extends IntentService
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg)
+    private void sendNotification(ContactMessage msg)
     {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -109,9 +103,9 @@ public class GcmIntentService extends IntentService
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
         		.setSmallIcon(R.drawable.ic_stat_icon)
-        		.setContentTitle("GCM Notification")
-        		.setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-        		.setContentText(msg);
+        		.setContentTitle("Nuevo mensaje de " + msg.sender)
+        		.setStyle(new NotificationCompat.BigTextStyle().bigText(msg.msg))
+        		.setContentText(msg.msg);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
