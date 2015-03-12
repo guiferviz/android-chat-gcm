@@ -207,8 +207,8 @@ public class MainActivity extends Activity implements OnClickListener
 	{
 		// Hardcored user.
 		Contact contact = new Contact();
-		contact.setName("guille");
-		contact.setRegId("APA91bEziSGrotNJY4AgzMQsgL2uS2RrYadsRc7wIme4hXu29gQ8LK_4-xfiKQZLxSRkCt3LQsFHWTzQKWAYr4bxDKU_VLLncmCmMRVcCttr4O_QUVyNH4dhc4r69rGfauHK_eSdU3ZetvX1YrT4Xq84acHoJtMxpFFVesYcH8_xV_pWm9om7-oXK24KTGYojHdeIhbhJAci");
+		contact.setName("guiller");
+		contact.setRegId("APA91bEZDKRCgfumTodfa7CHwVJAtQLqsFm8sROgHHjDthAlCFkDtkEjhH59AnAM2tF-GgO6MjPzwaGQ0g-O4x2-uq8efsEy82DywM4Sabuw5aMI1TtFNlLgi45g8SvlXbpCGqWebfLNbsZO0jr6o9pEg4oEkG47mp8Ycv5co1ZxcX73b5FqhRQ");
 		
 		return contact;
 	}
