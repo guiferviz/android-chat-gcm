@@ -57,7 +57,7 @@ public class Chat extends com.google.api.client.googleapis.services.json.Abstrac
    *
    * @since 1.7
    */
-  public static final String DEFAULT_ROOT_URL = "https://pruebas-gae.appspot.com/_ah/api/";
+  public static final String DEFAULT_ROOT_URL = "https://chat-dot-pruebas-gae.appspot.com/_ah/api/";
 
   /**
    * The default encoded service path of the service. This is determined when the library is
