@@ -6,6 +6,7 @@ package com.blogger.programmingheroes.chat.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -102,5 +103,21 @@ public class ChatDatabase extends SQLiteOpenHelper
         
         return messages;
     }
+
+
+    /**
+     * Añade un mensaje a la base de datos.
+     * 
+     * @param msg Mensaje a añadir.
+     */
+	public void add(ContactMessage msg)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues contentValues = new ContentValues();
+		contentValues.put("sender", msg.sender);
+		contentValues.put("message", msg.msg);
+		
+        db.insert(MESSAGES_TABLE_NAME, null, contentValues);
+	}
 
 }
