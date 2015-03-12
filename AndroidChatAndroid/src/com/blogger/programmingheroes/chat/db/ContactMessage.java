@@ -1,6 +1,6 @@
 
 
-package com.blogspot.programmingheroes.chat;
+package com.blogger.programmingheroes.chat.db;
 
 
 //import java.util.Date;
