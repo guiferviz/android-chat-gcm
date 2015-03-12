@@ -3,47 +3,50 @@
 package com.blogspot.programmingheroes.chat;
 
 
+import java.util.List;
+
+import com.blogger.programmingheroes.chat.db.ContactMessage;
+
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
-import android.util.Log;
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 
-public class MessageAdapter extends BaseAdapter implements OnClickListener
+/**
+ * Se encarga de rellenar el listview con el contenido de los mensajes.
+ * 
+ * @author ProgrammingHeroes
+ *
+ */
+public class MessageAdapter extends BaseAdapter
 {
 	
-	/*private List<GuestMessage> data;
+	private List<ContactMessage> data;
 	
 	private LayoutInflater inflater;
 	
-	private Gbe gbe;
 	
-	
-	public MessageAdapter(Context context, List<GuestMessage> data, Gbe gbe)
+	public MessageAdapter(Context context, List<ContactMessage> data)
 	{
-		// Forma 1
 		this.inflater = LayoutInflater.from(context);
-		// Forma 2
-		//this.inflater = (LayoutInflater)
-		//		context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.data = data;
-		this.gbe = gbe;
-	}*/
+	}
 	
 
 	@Override
 	public int getCount()
 	{
-		return 0;//this.data.size();
+		return data.size();
 	}
 
 	@Override
 	public Object getItem(int position)
 	{
-		return null;//this.data.get(position);
+		return data.get(position);
 	}
 
 	@Override
@@ -56,84 +59,32 @@ public class MessageAdapter extends BaseAdapter implements OnClickListener
 	@SuppressLint("InflateParams")
 	public View getView(int n, View view, ViewGroup parent)
 	{
-		/*GuestMessage message = data.get(n);
+		ContactMessage message = data.get(n);
 		
 		if (view == null)
 		{
 			view = inflater.inflate(R.layout.message_row, null);
 		}
 		
-		TextView date = (TextView) view.findViewById(R.id.text_view_date);
+		TextView user = (TextView) view.findViewById(R.id.text_view_date);
 		TextView msg = (TextView) view.findViewById(R.id.text_view_message);
-		Button button = (Button) view.findViewById(R.id.button_delete);
 		
-		date.setText(message.getDate().toString());
-		msg.setText(message.getMessage());
-		button.setTag(n);
-		button.setOnClickListener(this);
+		user.setText(message.sender);
+		msg.setText(message.msg);
 		
-		return view;*/
-		return null;
+		return view;
 	}
 
 
-	@Override
-	public void onClick(View v)
+	/**
+	 * Añade un nuevo mensaje al listview.
+	 * 
+	 * @param newMessage Nuevo mensaje.
+	 */
+	public void add(ContactMessage newMessage)
 	{
-		/*int n = (int) v.getTag();
-		GuestMessage guestMessage = (GuestMessage) data.get(n);
-		DeleteMessage deleteMessage = new DeleteMessage(guestMessage.getId());
-		deleteMessage.execute();
-		data.remove(n);
-		
-		notifyDataSetChanged();*/
-	}
-	
-	private class DeleteMessage extends AsyncTask<Void, Void, Void>
-    {
-
-        private Long id;
-        
-        public DeleteMessage(Long id)
-        {
-            this.id = id;
-        }
-        
-        @Override
-        protected Void doInBackground(Void ... unused)
-        {
-        	Void void1 = null;
-        	
-            /*try
-            {
-                Delete delete = gbe.delete(id);
-                void1 = delete.execute();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }*/
-            
-            return void1;
-        }
-
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            if (result == null)
-            {
-                Log.v("Resultados de create", "No creado, result == null");
-                return;
-            }
-            
-            Log.v("Propiedades", "¿Delete?: " + result.toString());
-        }
-    }
-
-	/*public void add(GuestMessage result)
-	{
-		data.add(result);
+		data.add(newMessage);
 		notifyDataSetChanged();
-	}*/
+	}
 
 }
