@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements OnClickListener
         protected ContactMessage doInBackground(Void ... unused)
         {
         	Contact contact = MainActivity.this.getUser();
-        	ContactMessage msg = new ContactMessage(message, "Yo");
+        	ContactMessage msg = new ContactMessage("Yo", message);
         	
             try
             {

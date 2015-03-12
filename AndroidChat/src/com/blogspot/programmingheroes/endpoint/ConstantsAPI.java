@@ -54,8 +54,8 @@ public class ConstantsAPI
 	/**
 	 * Sustituye esto por tu Web Client ID.
 	 */
-	public static final String WEB_CLIENT_ID =
-		"904173227385-sciqb53jtjlf4sdsgreh75vip6rhf845.apps.googleusercontent.com";
+	public static final String WEB_CLIENT_ID = "";
+		//"904173227385-sciqb53jtjlf4sdsgreh75vip6rhf845.apps.googleusercontent.com";
 	
 	/**
 	 * Sustituye esto por tu Android Client ID.
@@ -81,7 +81,7 @@ public class ConstantsAPI
 	/**
 	 * Scope OAuth2.0 que permite acceder principalmente al email del usuario.
 	 */
-	public static final String EMAIL_SCOPE =
-			"https://www.googleapis.com/auth/userinfo.email";
+	public static final String EMAIL_SCOPE = "";
+			//"https://www.googleapis.com/auth/userinfo.email";
 	
 }

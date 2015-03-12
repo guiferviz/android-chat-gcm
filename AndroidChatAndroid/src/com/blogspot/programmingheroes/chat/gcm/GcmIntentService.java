@@ -9,16 +9,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.blogger.programmingheroes.chat.db.ChatDatabase;
 import com.blogger.programmingheroes.chat.db.ContactMessage;
-import com.blogger.programmingheroes.endpoint.chat.model.Contact;
+import com.blogspot.programmingheroes.chat.MainActivity;
 import com.blogspot.programmingheroes.chat.R;
 import com.blogspot.programmingheroes.chat.RegistryActivity;
-import com.blogspot.programmingheroes.chat.R.drawable;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
@@ -98,7 +96,7 @@ public class GcmIntentService extends IntentService
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, RegistryActivity.class), 0);
+                new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

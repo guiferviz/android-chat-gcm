@@ -24,7 +24,7 @@ public class ChatDatabase extends SQLiteOpenHelper
 
 	private static final String DB_NAME = "chatDatabase";
 	
-	private static final int DB_VERSION = 1;
+	private static final int DB_VERSION = 4;
 	
 	private static final String MESSAGES_TABLE_NAME = "messages";
 
@@ -45,13 +45,27 @@ public class ChatDatabase extends SQLiteOpenHelper
 				+ "date datetime default current_timestamp);");
 	}
 
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
+		db.execSQL("DROP TABLE IF EXISTS " + MESSAGES_TABLE_NAME);
 		onCreate(db);
 	}
 	
 	
+	/**
+	 * Borra la tabla de mensajes de la base de datos indicada.
+	 * 
+	 * @param db Base de datos de la que borrar la tabla de mensajes.
+	 */
+	public void dropMessages()
+	{
+    	SQLiteDatabase db = this.getReadableDatabase();
+		db.execSQL("DROP TABLE IF EXISTS " + MESSAGES_TABLE_NAME);
+	}
+
+
 	/**
 	 * Cuenta el número de mensajes de la base de datos.
 	 * 
@@ -118,6 +132,19 @@ public class ChatDatabase extends SQLiteOpenHelper
 		contentValues.put("message", msg.msg);
 		
         db.insert(MESSAGES_TABLE_NAME, null, contentValues);
+	}
+	
+	/**
+     * Borra un mensaje de la base de datos.
+     * 
+     * @param msg Mensaje a borrar.
+     */
+	public void delete(ContactMessage msg)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		String[] args = new String[]{msg.sender};
+        db.delete(MESSAGES_TABLE_NAME, "sender = ?", args);
 	}
 
 }
