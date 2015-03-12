@@ -3,16 +3,28 @@
 package com.blogspot.programmingheroes.chat;
 
 
+import java.io.IOException;
+import java.util.List;
+
 import android.app.Activity;
-import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.blogger.programmingheroes.chat.db.ChatDatabase;
+import com.blogger.programmingheroes.chat.db.ContactMessage;
+import com.blogger.programmingheroes.endpoint.chat.Chat;
+import com.blogger.programmingheroes.endpoint.chat.Chat.GetAllContacts;
+import com.blogger.programmingheroes.endpoint.chat.model.Contact;
+import com.blogger.programmingheroes.endpoint.chat.model.ContactCollection;
 import com.blogspot.programmingheroes.chat.R;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.json.gson.GsonFactory;
 
 
 /**
@@ -47,11 +59,14 @@ import com.blogspot.programmingheroes.chat.R;
 public class MainActivity extends Activity implements OnClickListener
 {
 
-	private Context context;
+	private static final String LOG_TAG = MainActivity.class.getCanonicalName(); 
 	
-	//private Gbe guestBookEndpoint;
+	
+	private Chat chatEndpoint;
 	
 	private ListView listView;
+	
+	private ChatDatabase database;
 	
 	
 	@Override
@@ -60,154 +75,142 @@ public class MainActivity extends Activity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		this.context = this;
-		
 		listView = (ListView) findViewById(R.id.list_view);
-		
-		/* Array adapter de strings, hecho para probar.
-		String[] items = {"hola", "adios"};
-		 
-		
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-					this, android.R.layout.simple_list_item_1, items);
-		
-		listView.setAdapter(arrayAdapter);*/
-		
-		/*Gbe.Builder builder = new Gbe.Builder(
-				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
-		// No sé que es de application name...
-		//builder.setApplicationName("gbe");
-		guestBookEndpoint = builder.build();
-		
 		Button button = (Button) findViewById(R.id.button);
 		button.setOnClickListener(this);
 		
-		GetMessage getMessage = new GetMessage();
-		getMessage.execute();*/
+		Chat.Builder builder = new Chat.Builder(
+				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
+		//builder.setApplicationName("gbe");
+		chatEndpoint = builder.build();
+		
+		database = new ChatDatabase(this);
+		List<ContactMessage> messages = database.getAllMessages();
+    	MessageAdapter messageAdapter = new MessageAdapter(this, messages);
+    	listView.setAdapter(messageAdapter);
+    	
+    	GetContacts getContacts = new GetContacts();
+    	getContacts.execute();
 	}
 	
-	/*private class CreateMessage extends AsyncTask<Void, Void, GuestMessage>
+	private class SendMessage extends AsyncTask<Void, Void, ContactMessage>
     {
 
         private String message;
         
-        public CreateMessage(String message)
+        public SendMessage(String message)
         {
             this.message = message;
         }
         
         @Override
-        protected GuestMessage doInBackground(Void ... unused)
+        protected ContactMessage doInBackground(Void ... unused)
         {
-        	GuestMessage guestMessage = null;
-            
+        	Contact contact = MainActivity.this.getUser();
+        	ContactMessage msg = new ContactMessage(message, "Yo");
+        	
             try
             {
-                Create create = guestBookEndpoint.create(message);
-                guestMessage = create.execute();
+                Chat.SendMessage sendMessage = chatEndpoint.sendMessage(
+                		message, contact);
+                sendMessage.execute();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
             
-            return guestMessage;
+            return msg;
         }
 
         @Override
-        protected void onPostExecute(GuestMessage result)
+        protected void onPostExecute(ContactMessage result)
         {
             if (result == null)
             {
-                Log.v("Resultados de create", "No creado, result == null");
+                Log.v("Resultados de enviar", "No enviado, result == null");
                 return;
             }
             
-            Log.v("Propiedades del mensaje", "Date: " + result.getDate());
-            Log.v("Propiedades del mensaje", "Message: " + result.getMessage());
-            Log.v("Propiedades del mensaje", "Id: " + result.getId());
+            Log.v("Propiedades del mensaje", "Message: " + result.msg);
             
-            if (listView.getAdapter() != null)
-            {
-            	MessageAdapter baseAdapter = (MessageAdapter) listView.getAdapter();
-            	baseAdapter.add(result);
-            }
-            else
-            {
-            	ArrayList<GuestMessage> messages = new ArrayList<GuestMessage>();
-            	messages.add(result);
-            	MessageAdapter messageAdapter = new MessageAdapter(context,
-            			messages, guestBookEndpoint);
-            	listView.setAdapter(messageAdapter);
-			}
+            MessageAdapter baseAdapter = (MessageAdapter) listView.getAdapter();
+            baseAdapter.add(result);
+            database.add(result);
         }
     }
 	
-	private class GetMessage extends AsyncTask<Void, Void, GuestMessageCollection>
+	private class GetContacts extends AsyncTask<Void, Void, ContactCollection>
     {
 
-        public GetMessage()
+        public GetContacts()
         {
         }
         
         @Override
-        protected GuestMessageCollection doInBackground(Void ... unused)
+        protected ContactCollection doInBackground(Void ... unused)
         {
-        	GuestMessageCollection messages = null;
+        	ContactCollection contacts = null;
             
             try
             {
-                Get create = guestBookEndpoint.get();
-                messages = create.execute();
+                GetAllContacts create = chatEndpoint.getAllContacts();
+                contacts = create.execute();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
             
-            return messages;
+            return contacts;
         }
 
 		@Override
-        protected void onPostExecute(GuestMessageCollection result)
+        protected void onPostExecute(ContactCollection result)
         {
             if (result == null)
             {
-                Log.v("Resultados de create", "No creado, result == null");
+                Log.e("Resultados de GetContacts", "result == null");
                 return;
             }
             
-            List<GuestMessage> list = result.getItems();
+            List<Contact> list = result.getItems();
             
             if (list == null)
             {
-            	Log.v("Resultados", "No hay mensajes");
+            	Log.v("Resultados", "No hay contactos");
             	return;
             }
             
             for (int i = 0; i < list.size(); i++)
             {
-            	Log.v("Propiedades", "Date: " + list.get(i).getDate());
-            	Log.v("Propiedades", "Message: " + list.get(i).getMessage());
-            	Log.v("Propiedades", "Id: " + list.get(i).getId());
+            	Log.v("Propiedades", "Nombre: " + list.get(i).getName());
+            	Log.v("Propiedades", "RegId: " + list.get(i).getRegId());
             	Log.v("Propiedades", "-------------");
             }
-            
-            MessageAdapter messageAdapter = new MessageAdapter(
-            		context, list, guestBookEndpoint);
-            listView.setAdapter(messageAdapter);
-            listView.setSelection(list.size() - 1);
+
+            // FIXME ¿Añadir contactos al listview?
         }
-    }*/
+    }
 	
 	@Override
 	public void onClick(View v)
 	{
 		EditText textView = (EditText) findViewById(R.id.edit_text);		
-		Log.v("ja", textView.getText().toString());
-		/*CreateMessage createMessage = new CreateMessage(
+		Log.v(LOG_TAG, "Enviando mensaje: " + textView.getText().toString());
+		SendMessage sendMessage = new SendMessage(
 				textView.getText().toString());
-		createMessage.execute();		*/
+		sendMessage.execute();
+	}
+
+	public Contact getUser()
+	{
+		// Hardcored user.
+		Contact contact = new Contact();
+		contact.setName("guille");
+		contact.setRegId("APA91bEziSGrotNJY4AgzMQsgL2uS2RrYadsRc7wIme4hXu29gQ8LK_4-xfiKQZLxSRkCt3LQsFHWTzQKWAYr4bxDKU_VLLncmCmMRVcCttr4O_QUVyNH4dhc4r69rGfauHK_eSdU3ZetvX1YrT4Xq84acHoJtMxpFFVesYcH8_xV_pWm9om7-oXK24KTGYojHdeIhbhJAci");
+		
+		return contact;
 	}
 
 }
