@@ -5,5 +5,7 @@
     <string name="send">Enviar</string>
     <string name="delete">Borrar</string>
     <string name="title_activity_registry">RegistryActivity</string>
+    <string name="text_view_user_name">Nombre de usuario:</string>
+    <string name="button_login">Iniciar sesión</string>
 
 </resources>

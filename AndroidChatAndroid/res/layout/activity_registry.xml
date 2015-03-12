@@ -8,4 +8,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.blogspot.programmingheroes.chat.RegistryActivity" >
 
+    <EditText
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/button_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="79dp"
+        android:text="@string/button_login" />
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/user_name"
+        android:layout_centerHorizontal="true"
+        android:text="@string/text_view_user_name" />
+        
 </RelativeLayout>
