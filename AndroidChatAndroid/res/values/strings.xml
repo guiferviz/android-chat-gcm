@@ -7,5 +7,6 @@
     <string name="title_activity_registry">RegistryActivity</string>
     <string name="text_view_user_name">Nombre de usuario:</string>
     <string name="button_login">Iniciar sesión</string>
+    <string name="user_same_name_error">Nombre de usuario existente.</string>
 
 </resources>

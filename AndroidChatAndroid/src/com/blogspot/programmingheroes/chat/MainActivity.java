@@ -19,9 +19,11 @@ import com.blogger.programmingheroes.chat.db.ChatDatabase;
 import com.blogger.programmingheroes.chat.db.ContactMessage;
 import com.blogger.programmingheroes.endpoint.chat.Chat;
 import com.blogger.programmingheroes.endpoint.chat.model.Contact;
+import com.blogger.programmingheroes.endpoint.chat.tasks.CreateContactTask;
 import com.blogger.programmingheroes.endpoint.chat.tasks.GetContactsTask;
 import com.blogger.programmingheroes.endpoint.chat.tasks.SendMessageTask;
 import com.blogspot.programmingheroes.chat.R;
+import com.blogspot.programmingheroes.chat.gcm.RegistryGCM;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.json.gson.GsonFactory;
 
@@ -69,21 +71,50 @@ public class MainActivity extends Activity implements OnClickListener
 	
 	private MainActivityReceiver mainActivityReceiver;
 	
+	private Contact user;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
 		
-		listView = (ListView) findViewById(R.id.list_view);
-		Button button = (Button) findViewById(R.id.button);
-		button.setOnClickListener(this);
+		loadUser();
+		loadChatEndpoint();
 		
+		if (user.getName() == null || user.getName().equals(""))
+		{
+			registry();
+		}
+		else
+		{
+			initChat();
+		}
+	}
+	
+	private void loadChatEndpoint()
+	{
 		Chat.Builder builder = new Chat.Builder(
 				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
 		//builder.setApplicationName("gbe");
 		chatEndpoint = builder.build();
+	}
+
+	private void registry()
+	{
+		setContentView(R.layout.activity_registry);
+		
+		Button button = (Button) findViewById(R.id.button_login);
+		button.setOnClickListener(this);
+	}
+
+	public void initChat()
+	{
+		setContentView(R.layout.activity_main);
+		
+		listView = (ListView) findViewById(R.id.list_view);
+		Button button = (Button) findViewById(R.id.button_send);
+		button.setOnClickListener(this);
 		
 		database = new ChatDatabase(this);
 		List<ContactMessage> messages = database.getAllMessages();
@@ -94,6 +125,15 @@ public class MainActivity extends Activity implements OnClickListener
     	getContacts.execute();
     	
     	mainActivityReceiver = new MainActivityReceiver(this);
+    	IntentFilter filter = new IntentFilter(
+	    		"com.google.android.c2dm.intent.RECEIVE");
+	    filter.setPriority(1);
+	    registerReceiver(mainActivityReceiver, filter);
+	    
+	    // Para borrar usuario mientras no ponemos opción en un menú.
+	    //user.setName("");
+	    //user.setRegId("");
+	    //saveUser();
 	}
 
 	@Override
@@ -101,10 +141,13 @@ public class MainActivity extends Activity implements OnClickListener
 	{
 		// Registramos un broadcast receiver para evitar la aparición de
 		// notificaciones. Directamente se añadirá el mensaje.
-	    IntentFilter filter = new IntentFilter(
-	    		"com.google.android.c2dm.intent.RECEIVE");
-	    filter.setPriority(1);
-	    registerReceiver(mainActivityReceiver, filter);
+		if (mainActivityReceiver != null)
+		{
+		    IntentFilter filter = new IntentFilter(
+		    		"com.google.android.c2dm.intent.RECEIVE");
+		    filter.setPriority(1);
+		    registerReceiver(mainActivityReceiver, filter);
+		}
 
 	    super.onResume();
 	}
@@ -112,7 +155,10 @@ public class MainActivity extends Activity implements OnClickListener
 	@Override
 	protected void onPause()
 	{
-		unregisterReceiver(mainActivityReceiver);
+		if (mainActivityReceiver != null)
+		{
+			unregisterReceiver(mainActivityReceiver);
+		}
 		
 		super.onPause();
 	}
@@ -120,22 +166,55 @@ public class MainActivity extends Activity implements OnClickListener
 	@Override
 	public void onClick(View v)
 	{
-		// Send button clicked.
-		EditText textView = (EditText) findViewById(R.id.edit_text);
-		Log.v(LOG_TAG, "Enviando mensaje: " + textView.getText().toString());
-		SendMessageTask sendMessage = new SendMessageTask(this,
-				textView.getText().toString());
-		sendMessage.execute();
+		if (v.getId() == R.id.button_send)
+		{
+			// Send button clicked.
+			EditText textView = (EditText) findViewById(R.id.edit_text);
+			Log.v(LOG_TAG, "Enviando mensaje: " + textView.getText().toString());
+			SendMessageTask sendMessage = new SendMessageTask(this,
+					textView.getText().toString());
+			sendMessage.execute();
+		}
+		else if (v.getId() == R.id.button_login)
+		{
+			EditText textView = (EditText) findViewById(R.id.user_name);
+			user.setName(textView.getText().toString());
+						
+			if (!user.getName().equals(""))
+			{
+				RegistryGCM.doRegistryGCM(this);
+			}
+		}
+	}
+	
+	public void registryUser()
+	{
+		CreateContactTask createContactTask =
+				new CreateContactTask(this, user);
+		createContactTask.execute();
 	}
 
+	/**
+	 * Devuelve el usuario actual que se encuentra registrado en la app.
+	 * 
+	 * @return Usuario actual.
+	 */
 	public Contact getUser()
 	{
-		// Hardcored user.
-		Contact contact = new Contact();
-		contact.setName("guiller");
-		contact.setRegId("APA91bEZDKRCgfumTodfa7CHwVJAtQLqsFm8sROgHHjDthAlCFkDtkEjhH59AnAM2tF-GgO6MjPzwaGQ0g-O4x2-uq8efsEy82DywM4Sabuw5aMI1TtFNlLgi45g8SvlXbpCGqWebfLNbsZO0jr6o9pEg4oEkG47mp8Ycv5co1ZxcX73b5FqhRQ");
-		
-		return contact;
+		return user;
+	}
+	
+	private void loadUser()
+	{
+		user = new Contact();
+		user.setName(SharedPreferencesManager.getContactName(this));
+		user.setRegId(SharedPreferencesManager.getContactRegID(this));
+	}
+	
+	public void saveUser()
+	{
+		SharedPreferencesManager.setContactName(this, user.getName());
+		SharedPreferencesManager.setContactRegID(this, user.getRegId());
 	}
 
 	/**

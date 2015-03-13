@@ -16,7 +16,6 @@ import com.blogger.programmingheroes.chat.db.ChatDatabase;
 import com.blogger.programmingheroes.chat.db.ContactMessage;
 import com.blogspot.programmingheroes.chat.MainActivity;
 import com.blogspot.programmingheroes.chat.R;
-import com.blogspot.programmingheroes.chat.RegistryActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 

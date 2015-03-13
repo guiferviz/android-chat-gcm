@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/button"
-        android:layout_toLeftOf="@+id/button"
+        android:layout_alignTop="@+id/button_send"
+        android:layout_toLeftOf="@+id/button_send"
         android:inputType="textMultiLine" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

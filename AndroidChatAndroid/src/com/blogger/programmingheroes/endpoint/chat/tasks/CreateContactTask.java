@@ -7,10 +7,13 @@ import java.io.IOException;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blogger.programmingheroes.endpoint.chat.Chat;
 import com.blogger.programmingheroes.endpoint.chat.model.Contact;
 import com.blogspot.programmingheroes.chat.MainActivity;
+import com.blogspot.programmingheroes.chat.R;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 
 
 /**
@@ -29,6 +32,8 @@ public class CreateContactTask extends AsyncTask<Void, Void, Boolean>
     private Contact contact;
     
     private MainActivity mainActivity;
+    
+    private int errorCode;
 
 
     public CreateContactTask(MainActivity mainActivity, Contact contact)
@@ -48,6 +53,11 @@ public class CreateContactTask extends AsyncTask<Void, Void, Boolean>
             		contact.getName(), contact.getRegId());
             createContact.execute();
         }
+        catch (GoogleJsonResponseException e)
+        {
+			errorCode = e.getStatusCode();
+			return false;
+		}
         catch (IOException e)
         {
             e.printStackTrace();
@@ -74,11 +84,21 @@ public class CreateContactTask extends AsyncTask<Void, Void, Boolean>
         if (result)
         {
         	Log.v(LOG_TAG, "Usuario registrado con éxito.");
-        	// TODO logged user
+        	
+        	mainActivity.saveUser();
+        	mainActivity.initChat();
         }
         else
         {
         	Log.e(LOG_TAG, "El usuario no ha podido registrarse.");
+        	
+        	if (errorCode == 409)
+        	{
+        		Toast.makeText(mainActivity,
+        				mainActivity.getResources().getString(
+        						R.string.user_same_name_error),
+        				Toast.LENGTH_LONG).show();
+        	}
 		}
     }
 
