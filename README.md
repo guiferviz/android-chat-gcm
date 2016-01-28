@@ -4,6 +4,11 @@ Chat de Android con Google App Engine.
 
 Este proyecto no usa ningún tipo de autenticación de usuarios.
 Entras en la aplicación, introduces tu nombre de usuario y comienzas a chatear con cualquier usuario que tenga la aplicación instalada y haya introducido su nombre de usuario.
+
+Si lo deseas, puedes [descargar el APK](https://github.com/guiferviz/android-chat-gcm/releases/download/v1.0/AndroidChatAndroid.apk) directamente sin la necesidad de compilar el proyecto.
+
+![](https://github.com/guiferviz/android-chat-gcm/releases/download/v1.0/photo_2016-01-28_13-43-04.jpg)
+
 ### ¿Para qué es este repositorio? ###
 
 * Practicar la creación de **APIs** con Google App Engine.
