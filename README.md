@@ -9,7 +9,7 @@ Al usar Google Cloud Message (GCM), los mensajes llegan aún sin estar dentro de
 
 Si lo deseas, puedes [descargar el APK](https://github.com/guiferviz/android-chat-gcm/releases/download/v1.0/AndroidChatAndroid.apk) directamente sin la necesidad de compilar el proyecto.
 
-![](https://raw.githubusercontent.com/guiferviz/android-chat-gcm/gh-pages/captura.jpg)
+<img src="https://raw.githubusercontent.com/guiferviz/android-chat-gcm/gh-pages/captura.jpg" width="300">
 
 ### ¿Para qué es este repositorio? ###
 
